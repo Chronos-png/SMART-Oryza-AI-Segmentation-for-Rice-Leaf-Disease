@@ -1,0 +1,13 @@
+streamlit
+pillow==10.4.0
+numpy==1.26.4
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.3.0
+torchvision==0.18.0
+matplotlib==3.9.4
+plotly==5.16.1
+torchaudio
+albumentations==1.4.3
+opencv-python
+huggingface-hub
+gdown
