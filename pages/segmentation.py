@@ -66,7 +66,12 @@ div[data-testid="metric-container"] {
 # =========================================================
 # MODEL LOADER
 # =========================================================
-@st.cache_resource(show_spinner="Memuat model deep learning...")
+if not os.path.exists(MODEL_PATH):
+    spinner_msg = "Model belum ditemukan secara lokal. Mengunduh model dari Google Drive (130MB)..."
+else:
+    spinner_msg = "Memuat model deep learning..."
+
+@st.cache_resource(show_spinner=spinner_msg)
 def load_model():
     # 1. Inisialisasi arsitektur model
     model = MFBP_UNet(
@@ -79,7 +84,7 @@ def load_model():
     if not os.path.exists(MODEL_PATH):
         os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
         
-        file_id = "1X9n2s8m7l5k3j2h1g0f9a8b7c6d5e4"
+        file_id = "10JaUUC4nJlPzZ7Ndk0glMzu16jLq0A_G"
         url = f"https://drive.google.com/uc?id={file_id}"
         
         with st.spinner("Mengunduh model (130MB)... Mohon tunggu."):
