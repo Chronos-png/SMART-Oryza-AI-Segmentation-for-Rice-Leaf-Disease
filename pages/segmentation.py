@@ -29,7 +29,6 @@ IMAGE_SIZE = 512
 # =========================================================
 CUSTOM_CSS = """
 <style>
-/* Styling Header Aplikasi */
 .app-header {
     background: linear-gradient(135deg, #2E8B57, #8FBC8F);
     padding: 25px;
@@ -51,7 +50,6 @@ CUSTOM_CSS = """
     font-style: italic;
     opacity: 0.95;
 }
-/* Mempercantik kotak metrik bawaan Streamlit */
 div[data-testid="metric-container"] {
     background-color: #f8faf8;
     border: 1px solid #e2e8e0;
@@ -199,11 +197,19 @@ def show_segmentation():
     2. Penyakit yang terdeteksi akan ditandai dengan warna merah pada gambar hasil overlay.
     3. Fokus penyakit pada model saat ini hanya leaf blast, brown spot, dan hispa. Pastikan gambar yang diunggah memiliki salah satu dari ketiga penyakit tersebut untuk melihat hasil segmentasi yang optimal.
     """)
-    
-    uploaded_file = st.file_uploader(
-        "📂 Pilih gambar daun tanaman (JPG/PNG)",
-        type=["jpg", "jpeg", "png"]
-    )
+    tab1, tab2 = st.tabs(["📁 Unggah Gambar", "📸 Ambil dari Kamera"])
+
+    with tab1:
+        file_upload = st.file_uploader(
+            "📂 Pilih gambar daun tanaman (JPG/PNG)",
+            type=["jpg", "jpeg", "png"]
+        )
+        
+    with tab2:
+        camera_upload = st.camera_input("📸 Ambil foto daun tanaman secara langsung")
+
+    # Menentukan file mana yang akan digunakan (kamera diprioritaskan jika ada, atau file upload)
+    uploaded_file = camera_upload if camera_upload is not None else file_upload
 
     if uploaded_file is None:
         # Hentikan eksekusi di sini jika belum ada file
