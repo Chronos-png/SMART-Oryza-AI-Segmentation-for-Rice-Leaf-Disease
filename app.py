@@ -129,7 +129,7 @@ def render_sidebar():
             </div>
 
             <div style="font-size: 0.9em;">
-                <b> Prodi: </b> S1 Teknik Informatika dan S2 PSDA
+                <b> Prodi: </b> S1 Teknik Informatika dan S2 PSDA <br>
                 <b> Universitas: </b> <a href="https://www2.trunojoyo.ac.id/" target="_blank" style="color: #2E8B57; text-decoration: none; display: inline-flex; align-items: center;"> Universitas Trunojoyo Madura</a>
             </div>
             """, unsafe_allow_html=True)
