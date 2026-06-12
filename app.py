@@ -4,6 +4,7 @@ import os
 from pages.home import show_home
 from pages.data_understanding import show_data_understanding
 from pages.segmentation import show_segmentation
+from pages.profil import show_profile_mbkm
 
 # --------------------------------------------
 # Config
@@ -86,7 +87,8 @@ def render_sidebar():
         pages_dict = {
             "Home": show_home,
             "Data Understanding": show_data_understanding,
-            "Segmentasi": show_segmentation
+            "Segmentasi": show_segmentation,
+            "Profil Peneliti": show_profile_mbkm
         }
 
         # Menu Radio Kustom
