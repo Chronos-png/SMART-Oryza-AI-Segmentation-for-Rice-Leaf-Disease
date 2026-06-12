@@ -1,27 +1,14 @@
+import os
+
 import streamlit as st
 import pandas as pd
 import streamlit as st
 from scholarly import scholarly
-
-def get_scholar_publications(author_id):
-    try:
-        # Mencari profil berdasarkan ID Google Scholar
-        author = scholarly.search_author_id(author_id)
-        # Mengisi data spesifik publikasi (hanya mengambil info dasar agar cepat)
-        author_filled = scholarly.fill(author, sections=['publications'])
-        
-        pub_list = []
-        # Ambil 5-10 publikasi teratas saja agar loading tidak terlalu lama
-        for pub in author_filled['publications'][:5]:
-            pub_info = scholarly.fill(pub)
-            pub_list.append({
-                "Judul": pub_info['bib'].get('title', 'N/A'),
-                "Tahun": pub_info['bib'].get('pub_year', 'N/A'),
-                "Sitasi": pub_info.get('num_citations', 0)
-            })
-        return pub_list
-    except Exception as e:
-        return None
+import requests
+from bs4 import BeautifulSoup
+from pages.function.scrapper_sinta import get_sinta_metrics
+from pages.function.scholar_api import get_scholar_publications
+from pages.function.get_image import get_image_base64, get_image_base64_2
 
 
 def show_profile_mbkm(logo_html="🏛️"):  
@@ -47,7 +34,7 @@ def show_profile_mbkm(logo_html="🏛️"):
         Melalui skema ini, mahasiswa diintegrasikan langsung ke dalam proyek riset dosen yang relevan dengan kebutuhan industri dan pengembangan potensi daerah, khususnya di wilayah Madura dan skala nasional.
         
         """)
-        st.markdown("[🌐 Kunjungi Web Resmi UTM](https://www2.trunojoyo.ac.id/)", unsafe_allow_html=True)
+        st.link_button("🌐 Kunjungi Web Resmi UTM ↗", "https://www2.trunojoyo.ac.id/")
     # ===========================================================================
     
     # Statistik Riset/MBKM di UTM
@@ -93,38 +80,55 @@ def show_profile_mbkm(logo_html="🏛️"):
             * **Magister (S2):** Teknik Elektro (Jaringan Cerdas Multimedia) – Institut Teknologi Sepuluh Nopember (ITS)
             * **Sarjana (S1):** Teknik Elektro – Institut Teknologi Sepuluh Nopember (ITS)
             """)
-            
-            # Publikasi dan Proyek
-            with st.expander("📚 5 Publikasi teratas di Google Scholar"):
-                # st.write("Memuat data publikasi...")
+
+            data_sinta = get_sinta_metrics("5977254")
+
+            sinta_img = get_image_base64_2("sinta.png")
+            st.markdown(
+                f"""
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <img src="data:image/png;base64,{sinta_img}" style="height:24px; width:auto;">
+                    <span style="font-size:1.1rem; font-weight:bold;">
+                        Skor SINTA & Indeks Publikasi:
+                    </span>
+                </div>
+                <br>
+                """,
+                unsafe_allow_html=True
+            )
+
+            # st.markdown("**📈 Skor SINTA & Indeks Publikasi:**")
+            sm1, sm2, sm3, sm4 = st.columns(4)
+            sm1.metric("SINTA Overall", data_sinta["sinta_score_overall"])
+            sm2.metric("SINTA 3Yr", data_sinta["sinta_score_3yr"])
+            sm3.metric("Scopus H-Index", data_sinta["scopus_hindex"])
+            sm4.metric("Scholar H-Index", data_sinta["gscholar_hindex"])
+            st.link_button(
+                "Profil SINTA Kemdiktisaintek ↗", 
+                "https://sinta.kemdiktisaintek.go.id/authors/profile/5977254"
+            )
+        # Publikasi dan Proyek
+        with st.expander("📚 5 Publikasi teratas di Google Scholar"):
+            # st.write("Memuat data publikasi...")
                 
-                # Masukkan ID dari URL: Q4Dwd_AAAAAJ
-                daftar_jurnal = get_scholar_publications("Q4Dwd_AAAAAJ")
+            # Masukkan ID dari URL: Q4Dwd_AAAAAJ
+            daftar_jurnal = get_scholar_publications("Q4Dwd_AAAAAJ")
                 
-                if daftar_jurnal:
-                    for jurnal in daftar_jurnal:
-                        st.markdown(f"**{jurnal['Judul']}** ({jurnal['Tahun']})")
-                        st.caption(f"⭐ Disitasi sebanyak: {jurnal['Sitasi']} kali")
-                        st.write("---")
-                else:
-                    # Fallback jika Google memblokir akses otomatis (Captcha triggered)
-                    st.warning("Gagal memuat otomatis karena batasan akses Google Scholar.")
-                    st.markdown("[Klik di sini untuk melihat langsung di Google Scholar](https://scholar.google.com/citations?user=Q4Dwd_AAAAAJ)")
+            if daftar_jurnal:
+                for jurnal in daftar_jurnal:
+                    st.markdown(f"**{jurnal['Judul']}** ({jurnal['Tahun']})")
+                    st.caption(f"⭐ Disitasi sebanyak: {jurnal['Sitasi']} kali")
+                    st.write("---")
+            else:
+                # Fallback jika Google memblokir akses otomatis (Captcha triggered)
+                st.warning("Gagal memuat otomatis karena batasan akses Google Scholar.")
+                st.markdown("[Klik di sini untuk melihat langsung di Google Scholar](https://scholar.google.com/citations?user=Q4Dwd_AAAAAJ)")
                     
     st.write("") # Spacer
-
+    
     # --- Peneliti 2 (Fokus Teknik Informatika / Data Science) ---
-    svg_github = """
-        <svg height="18" viewBox="0 0 16 16" version="1.1" width="18" aria-hidden="true" style="vertical-align: middle; margin-right: 5px;">
-          <path fill="grey" fill-rule="evenodd"
-            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
-            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
-            -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64
-            -.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68.003
-            1.36.092 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75
-            -3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-        </svg>
-    """
+    svg_github = """<svg height="16" viewBox="0 0 16 16" width="16" style="vertical-align: text-bottom; margin-right: 4px;"><path fill="#24292f" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68.003 1.36.092 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>"""
+    
     with st.container(border=True):
         col_p2_img, col_p2_txt = st.columns([1, 3])
         
@@ -134,10 +138,7 @@ def show_profile_mbkm(logo_html="🏛️"):
         with col_p2_txt:
             st.markdown("### Ahmad Ar-rosyid Hidayatullah")
             st.caption("Anggota Tim Riset MBKM | Mahasiswa Teknik Informatika UTM")
-            st.markdown("""
-                        <b>Github:</b> <a href="https://github.com/Chronos-png" target="_blank" style="color: grey; text-decoration: none; display: inline-flex; align-items: center;">{svg_github} Chronos-png</a>
-                        """.format(svg_github=svg_github), 
-            unsafe_allow_html=True)
+            st.markdown(f"GitHub : {svg_github} [**Chronos-png ↗**](https://github.com/Chronos-png)", unsafe_allow_html=True)
     # --- FOOTER ---
     st.write("---")
     st.caption("© 2026 MBKM Riset - Universitas Trunojoyo Madura. Dikembangkan menggunakan Streamlit. - Last Updated: 2026-06-12")

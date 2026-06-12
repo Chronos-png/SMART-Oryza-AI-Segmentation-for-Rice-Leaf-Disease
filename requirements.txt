@@ -12,3 +12,5 @@ opencv-python-headless
 huggingface-hub
 gdown
 scholarly
+beautifulsoup4
+requests

@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.subplots as sp
 import os
+import base64
+from pages.function.get_image import get_image_base64
 
 # =========================================================
 # CSS (Tema Agrikultur & Modern UI)
@@ -93,34 +95,20 @@ ABSTRACT_TEXT = """
 </div>
 """
 
-import base64
 
-# 1. Fungsi Pembantu untuk Mengubah Gambar Lokal ke Base64
-def get_image_base64(path_gambar):
-    try:
-        if os.path.exists(path_gambar):
-            with open(path_gambar, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read()).decode()
-            return f"data:image/jpeg;base64,{encoded_string}"
-        else:
-            # Jika file tidak ketemu, pakai placeholder agar web tidak crash
-            return "https://via.placeholder.com/300x200?text=Gambar+Tidak+Ditemukan"
-    except Exception:
-        return "https://via.placeholder.com/300x200?text=Error"
-
-# 2. Path Gambar Lokal Anda (Pastikan file-file ini satu folder dengan app.py Anda)
+# Path Gambar Lokal Anda (Pastikan file-file ini satu folder dengan app.py Anda)
 PATH_LEAF_BLAST = "blast-leaf.jpg"
 PATH_BROWN_SPOT = "brown-spot-3.jpg"
 PATH_HISPA = "hispa.jpg"
 PATH_SERANGGA_HISPA = "rice-hispa.jpg"
 
-# 3. Konversi Otomatis ke format yang dimengerti oleh Tag HTML <img>
+# Konversi Otomatis ke format yang dimengerti oleh Tag HTML <img>
 URL_GAMBAR_LEAF_BLAST = get_image_base64(PATH_LEAF_BLAST)
 URL_GAMBAR_BROWN_SPOT = get_image_base64(PATH_BROWN_SPOT)
 URL_GAMBAR_HISPA = get_image_base64(PATH_HISPA)
 URL_GAMBAR_SERANGGA_HISPA = get_image_base64(PATH_SERANGGA_HISPA)
 
-# 4. String HTML Anda (Tetap sama, tidak perlu diubah)
+# String HTML Anda (Tetap sama, tidak perlu diubah)
 PENYAKIT_TEXT = f"""
 <div style='text-align: justify; font-size: 16px; line-height: 1.7;'>
     <p>Model kami dilatih secara khusus untuk mendeteksi dan melokalisasi tiga anomali utama pada daun padi berikut:</p>
