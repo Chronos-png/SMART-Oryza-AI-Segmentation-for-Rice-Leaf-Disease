@@ -73,47 +73,58 @@ def show_profile_mbkm(logo_html="🏛️"):
 
     # --- Peneliti 1 (Fokus Agrikultur / AI) ---
     with st.container(border=True):
-        col_p1_img, col_p1_txt = st.columns([1, 3])
+        col_p1_img, col_p1_txt = st.columns([1, 3], gap="medium")
         
         with col_p1_img:
             # Anda bisa mengganti dengan foto dosen asli UTM nantinya
             st.image("yt_sc.png", caption="Pembimbing Utama", use_container_width=True)
             
         with col_p1_txt:
-                    # Menggunakan gelar yang benar, ditambahkan spasi standar penulisan gelar
-                    st.markdown("### Prof. Dr. Rima Tri Wahyuningrum, S.T., M.T.")
-                    
-                    # PILIHAN CAPTION (Menggunakan Opsi 2 yang sangat cocok untuk profil riset/MBKM)
-                    st.caption("Pembimbing Riset | Guru Besar & Dosen Pascasarjana FT-UTM")
-                    
-                    # Merapikan tampilan riwayat pendidikan menggunakan format list markdown yang elegan
-                    st.markdown("""
-                    **🎓 Riwayat Pendidikan:**
-                    * **Doktor (S3):** Teknik Elektro (Jaringan Cerdas Multimedia) – Institut Teknologi Sepuluh Nopember (ITS)
-                    * **Magister (S2):** Teknik Elektro (Jaringan Cerdas Multimedia) – Institut Teknologi Sepuluh Nopember (ITS)
-                    * **Sarjana (S1):** Teknik Elektro – Institut Teknologi Sepuluh Nopember (ITS)
-                    """)
-                    
-                    # Publikasi dan Proyek
-                    with st.expander("📚 5 Publikasi teratas di Google Scholar"):
-                        # st.write("Memuat data publikasi...")
-                        
-                        # Masukkan ID dari URL: Q4Dwd_AAAAAJ
-                        daftar_jurnal = get_scholar_publications("Q4Dwd_AAAAAJ")
-                        
-                        if daftar_jurnal:
-                            for jurnal in daftar_jurnal:
-                                st.markdown(f"**{jurnal['Judul']}** ({jurnal['Tahun']})")
-                                st.caption(f"⭐ Disitasi sebanyak: {jurnal['Sitasi']} kali")
-                                st.write("---")
-                        else:
-                            # Fallback jika Google memblokir akses otomatis (Captcha triggered)
-                            st.warning("Gagal memuat otomatis karena batasan akses Google Scholar.")
-                            st.markdown("[Klik di sini untuk melihat langsung di Google Scholar](https://scholar.google.com/citations?user=Q4Dwd_AAAAAJ)")
+            # Menggunakan gelar yang benar, ditambahkan spasi standar penulisan gelar
+            st.markdown("### Prof. Dr. Rima Tri Wahyuningrum, S.T., M.T.")
+            
+            # PILIHAN CAPTION (Menggunakan Opsi 2 yang sangat cocok untuk profil riset/MBKM)
+            st.caption("Pembimbing Riset | Guru Besar & Dosen Pascasarjana FT-UTM")
+            
+            # Merapikan tampilan riwayat pendidikan menggunakan format list markdown yang elegan
+            st.markdown("""
+            **🎓 Riwayat Pendidikan:**
+            * **Doktor (S3):** Teknik Elektro (Jaringan Cerdas Multimedia) – Institut Teknologi Sepuluh Nopember (ITS)
+            * **Magister (S2):** Teknik Elektro (Jaringan Cerdas Multimedia) – Institut Teknologi Sepuluh Nopember (ITS)
+            * **Sarjana (S1):** Teknik Elektro – Institut Teknologi Sepuluh Nopember (ITS)
+            """)
+            
+            # Publikasi dan Proyek
+            with st.expander("📚 5 Publikasi teratas di Google Scholar"):
+                # st.write("Memuat data publikasi...")
+                
+                # Masukkan ID dari URL: Q4Dwd_AAAAAJ
+                daftar_jurnal = get_scholar_publications("Q4Dwd_AAAAAJ")
+                
+                if daftar_jurnal:
+                    for jurnal in daftar_jurnal:
+                        st.markdown(f"**{jurnal['Judul']}** ({jurnal['Tahun']})")
+                        st.caption(f"⭐ Disitasi sebanyak: {jurnal['Sitasi']} kali")
+                        st.write("---")
+                else:
+                    # Fallback jika Google memblokir akses otomatis (Captcha triggered)
+                    st.warning("Gagal memuat otomatis karena batasan akses Google Scholar.")
+                    st.markdown("[Klik di sini untuk melihat langsung di Google Scholar](https://scholar.google.com/citations?user=Q4Dwd_AAAAAJ)")
                     
     st.write("") # Spacer
 
     # --- Peneliti 2 (Fokus Teknik Informatika / Data Science) ---
+    svg_github = """
+        <svg height="18" viewBox="0 0 16 16" version="1.1" width="18" aria-hidden="true" style="vertical-align: middle; margin-right: 5px;">
+          <path fill="grey" fill-rule="evenodd"
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+            -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64
+            -.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 012.01-.27c.68.003
+            1.36.092 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75
+            -3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+    """
     with st.container(border=True):
         col_p2_img, col_p2_txt = st.columns([1, 3])
         
@@ -122,8 +133,11 @@ def show_profile_mbkm(logo_html="🏛️"):
             
         with col_p2_txt:
             st.markdown("### Ahmad Ar-rosyid Hidayatullah")
-            st.caption("Anggota Kelompok Riset MBKM | Mahasiswa Teknik Informatika UTM")
-
+            st.caption("Anggota Tim Riset MBKM | Mahasiswa Teknik Informatika UTM")
+            st.markdown("""
+                        <b>Github:</b> <a href="https://github.com/Chronos-png" target="_blank" style="color: grey; text-decoration: none; display: inline-flex; align-items: center;">{svg_github} Chronos-png</a>
+                        """.format(svg_github=svg_github), 
+            unsafe_allow_html=True)
     # --- FOOTER ---
     st.write("---")
     st.caption("© 2026 MBKM Riset - Universitas Trunojoyo Madura. Dikembangkan menggunakan Streamlit. - Last Updated: 2026-06-12")

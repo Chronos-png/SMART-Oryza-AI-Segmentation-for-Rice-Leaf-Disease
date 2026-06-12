@@ -93,12 +93,34 @@ ABSTRACT_TEXT = """
 </div>
 """
 
-# URLs Gambar
-URL_GAMBAR_LEAF_BLAST = "http://www.knowledgebank.irri.org/images/stories/blast-leaf.jpg"
-URL_GAMBAR_BROWN_SPOT = "http://www.knowledgebank.irri.org/images/stories/brown-spot-3.jpg"
-URL_GAMBAR_HISPA = "http://www.knowledgebank.irri.org/images/stories/rice-hispa-elongated-feeding.jpg"
-URL_GAMBAR_SERANGGA_HISPA = "http://www.knowledgebank.irri.org/images/stories/rice-hispa.jpg"
+import base64
 
+# 1. Fungsi Pembantu untuk Mengubah Gambar Lokal ke Base64
+def get_image_base64(path_gambar):
+    try:
+        if os.path.exists(path_gambar):
+            with open(path_gambar, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read()).decode()
+            return f"data:image/jpeg;base64,{encoded_string}"
+        else:
+            # Jika file tidak ketemu, pakai placeholder agar web tidak crash
+            return "https://via.placeholder.com/300x200?text=Gambar+Tidak+Ditemukan"
+    except Exception:
+        return "https://via.placeholder.com/300x200?text=Error"
+
+# 2. Path Gambar Lokal Anda (Pastikan file-file ini satu folder dengan app.py Anda)
+PATH_LEAF_BLAST = "blast-leaf.jpg"
+PATH_BROWN_SPOT = "brown-spot-3.jpg"
+PATH_HISPA = "hispa.jpg"
+PATH_SERANGGA_HISPA = "rice-hispa.jpg"
+
+# 3. Konversi Otomatis ke format yang dimengerti oleh Tag HTML <img>
+URL_GAMBAR_LEAF_BLAST = get_image_base64(PATH_LEAF_BLAST)
+URL_GAMBAR_BROWN_SPOT = get_image_base64(PATH_BROWN_SPOT)
+URL_GAMBAR_HISPA = get_image_base64(PATH_HISPA)
+URL_GAMBAR_SERANGGA_HISPA = get_image_base64(PATH_SERANGGA_HISPA)
+
+# 4. String HTML Anda (Tetap sama, tidak perlu diubah)
 PENYAKIT_TEXT = f"""
 <div style='text-align: justify; font-size: 16px; line-height: 1.7;'>
     <p>Model kami dilatih secara khusus untuk mendeteksi dan melokalisasi tiga anomali utama pada daun padi berikut:</p>
@@ -134,6 +156,48 @@ PENYAKIT_TEXT = f"""
     </div>
 </div>
 """
+
+# # URLs Gambar
+# URL_GAMBAR_LEAF_BLAST = "blast-leaf.jpg"
+# URL_GAMBAR_BROWN_SPOT = "brown-spot-3.jpg"
+# URL_GAMBAR_HISPA = "hispa.jpg"
+# URL_GAMBAR_SERANGGA_HISPA = "rice-hispa.jpg"
+
+# PENYAKIT_TEXT = f"""
+# <div style='text-align: justify; font-size: 16px; line-height: 1.7;'>
+#     <p>Model kami dilatih secara khusus untuk mendeteksi dan melokalisasi tiga anomali utama pada daun padi berikut:</p>
+#     <div class='disease-card'>
+#         <div class='disease-title'>🦠 Leaf Blast (Blas Daun)</div>
+#         <p>Disebabkan oleh infeksi jamur ganas <i>Pyricularia oryzae</i>. Bintik awalnya terlihat seperti titik putih kecil, lalu membesar menjadi bercak khas berbentuk belah ketupat (berlian) dengan pusat abu-abu dan pinggiran cokelat gelap.</p>
+#         <div style='text-align: center; margin: 15px 0;'>
+#             <img src='{URL_GAMBAR_LEAF_BLAST}' alt='Contoh Leaf Blast' style='max-width: 100%; height: 200px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0,0,0,0.1); object-fit: cover;'>
+#         </div>
+#         <p><b>💡 Penanganan:</b> Gunakan varietas tahan blas, hindari pemupukan Nitrogen berlebihan, atur jarak tanam agar sawah tidak terlalu lembap, dan aplikasikan fungisida (misal: <i>trisiklazol</i>) bila perlu.</p>
+#     </div>
+#     <div class='disease-card'>
+#         <div class='disease-title'>🍂 Brown Spot (Bercak Cokelat)</div>
+#         <p>Penyakit ini bagaikan "alarm" bahwa tanaman sedang kekurangan nutrisi! Disebabkan oleh jamur <i>Bipolaris oryzae</i>, gejalanya berupa bercak cokelat hingga hitam berbentuk oval menyerupai biji wijen.</p>
+#         <div style='text-align: center; margin: 15px 0;'>
+#             <img src='{URL_GAMBAR_BROWN_SPOT}' alt='Contoh Brown Spot' style='max-width: 100%; height: 200px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0,0,0,0.1); object-fit: cover;'>
+#         </div>
+#         <p><b>💡 Penanganan:</b> Perbaiki kesuburan tanah dengan pemupukan berimbang (N, P, K, plus Silika), perbaiki sistem drainase sawah, dan lakukan perlakuan benih (<i>seed treatment</i>) sebelum tanam.</p>
+#     </div>
+#     <div class='disease-card'>
+#         <div class='disease-title'>🐛 Serangan Hama Hispa</div>
+#         <p>Kerusakan ini bukan karena jamur, melainkan ulah serangga nakal <i>Dicladispa armata</i>. Serangga dewasa memakan jaringan hijau daun (klorofil) dan meninggalkan jejak berupa goresan putih memanjang yang membuat daun mengering.</p>
+#         <div style='text-align: center; margin: 15px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;'>
+#             <img src='{URL_GAMBAR_SERANGGA_HISPA}' alt='Wujud Serangga Hispa' style='height: 180px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0,0,0,0.1);'>
+#             <img src='{URL_GAMBAR_HISPA}' alt='Kerusakan Daun Hispa' style='height: 180px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0,0,0,0.1);'>
+#         </div>
+#         <p><b>💡 Penanganan:</b> Potong ujung daun bibit sebelum pindah tanam (untuk membuang telur hama), gunakan jaring ayun untuk menangkap hama secara mekanis, atau gunakan insektisida sistemik jika populasi sudah di luar kendali.</p>
+#     </div>
+#     <div style='background-color: #e8f5e9; padding: 15px; border-left: 5px solid #4CAF50; border-radius: 4px; font-size: 14px;'>
+#         <b>📚 Sumber Referensi:</b><br>
+#         1. <i>Rice Knowledge Bank</i> - International Rice Research Institute (IRRI).<br>
+#         2. Pedoman PHT BB Padi - Kementerian Pertanian Republik Indonesia.
+#     </div>
+# </div>
+# """
 
 # =========================================================
 # HELPERS
