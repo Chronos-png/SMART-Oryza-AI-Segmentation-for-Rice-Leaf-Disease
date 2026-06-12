@@ -77,7 +77,7 @@ def show_profile_mbkm(logo_html="🏛️"):
         
         with col_p1_img:
             # Anda bisa mengganti dengan foto dosen asli UTM nantinya
-            st.image("https://via.placeholder.com/150", caption="Pembimbing Utama", use_container_width=True)
+            st.image("yt_sc.png", caption="Pembimbing Utama", use_container_width=True)
             
         with col_p1_txt:
                     # Menggunakan gelar yang benar, ditambahkan spasi standar penulisan gelar
@@ -95,8 +95,8 @@ def show_profile_mbkm(logo_html="🏛️"):
                     """)
                     
                     # Publikasi dan Proyek
-                    with st.expander("📚 5 Publikasi Populer di Google Scholar"):
-                        st.write("Memuat data publikasi...")
+                    with st.expander("📚 5 Publikasi teratas di Google Scholar"):
+                        # st.write("Memuat data publikasi...")
                         
                         # Masukkan ID dari URL: Q4Dwd_AAAAAJ
                         daftar_jurnal = get_scholar_publications("Q4Dwd_AAAAAJ")
@@ -118,16 +118,11 @@ def show_profile_mbkm(logo_html="🏛️"):
         col_p2_img, col_p2_txt = st.columns([1, 3])
         
         with col_p2_img:
-            st.image("https://via.placeholder.com/150", caption="Anggota", use_container_width=True)
+            st.image("kurangtau.png", caption="Anggota", use_container_width=True)
             
         with col_p2_txt:
             st.markdown("### Ahmad Ar-rosyid Hidayatullah")
             st.caption("Anggota Kelompok Riset MBKM | Mahasiswa Teknik Informatika UTM")
-            st.write("""
-            **Bidang Keahlian & Proyek MBKM:** *Data Mining*, *Soft Computing*, dan *Artificial Intelligence* (AI).  
-            
-            Membuka peluang MBKM Riset bagi mahasiswa yang tertarik pada pemrosesan citra digital (*image processing*), pembelajaran mendalam (*deep learning*), dan segmentasi objek untuk mendukung sektor pertanian pintar (*smart agriculture*).
-            """)
 
     # --- FOOTER ---
     st.write("---")
