@@ -1,33 +1,29 @@
 import streamlit as st
 import pandas as pd
+import streamlit as st
+from scholarly import scholarly
 
-def get_scopus_publications(author_id):
+def get_scholar_publications(author_id):
     try:
-        from pybliometrics.scopus import AuthorRetrieval
-    except ImportError:
-        return None
-
-    try:
-        # Mengambil data penulis berdasarkan ID Scopus
-        au = AuthorRetrieval(author_id)
-        
-        # Mengambil daftar dokumen/publikasi (maksimal 10 terakhir agar cepat)
-        docs = au.get_documents(size=10)
+        # Mencari profil berdasarkan ID Google Scholar
+        author = scholarly.search_author_id(author_id)
+        # Mengisi data spesifik publikasi (hanya mengambil info dasar agar cepat)
+        author_filled = scholarly.fill(author, sections=['publications'])
         
         pub_list = []
-        for doc in docs:
-            # Mengambil informasi penting: Judul, Jurnal, Tahun
+        # Ambil 5-10 publikasi teratas saja agar loading tidak terlalu lama
+        for pub in author_filled['publications'][:5]:
+            pub_info = scholarly.fill(pub)
             pub_list.append({
-                "Judul": doc.title,
-                "Jurnal/Konferensi": doc.publicationName,
-                "Tahun": doc.coverDate.split("-")[0],
-                "Sitasi": doc.citedby_count
+                "Judul": pub_info['bib'].get('title', 'N/A'),
+                "Tahun": pub_info['bib'].get('pub_year', 'N/A'),
+                "Sitasi": pub_info.get('num_citations', 0)
             })
-        return pd.DataFrame(pub_list)
+        return pub_list
     except Exception as e:
-        # Jika API bermasalah/tidak terhubung ke jaringan kampus
         return None
- 
+
+
 def show_profile_mbkm(logo_html="🏛️"):  
     # --- SECTION 1: PROFIL UNIVERSITAS ---
     st.markdown(f"<h1>{logo_html} Profil Universitas & Peneliti</h1>", unsafe_allow_html=True)
@@ -81,7 +77,7 @@ def show_profile_mbkm(logo_html="🏛️"):
         
         with col_p1_img:
             # Anda bisa mengganti dengan foto dosen asli UTM nantinya
-            st.image("https://via.placeholder.com/150", caption="Pembimbing Utama 1", use_container_width=True)
+            st.image("https://via.placeholder.com/150", caption="Pembimbing Utama", use_container_width=True)
             
         with col_p1_txt:
                     # Menggunakan gelar yang benar, ditambahkan spasi standar penulisan gelar
@@ -98,44 +94,41 @@ def show_profile_mbkm(logo_html="🏛️"):
                     * **Sarjana (S1):** Teknik Elektro – Institut Teknologi Sepuluh Nopember (ITS)
                     """)
                     
-                    # Publikasi dan Proyek yang disesuaikan dengan bidang Teknik Elektro/Computer Vision beliau
-                    with st.expander("📚 Publikasi Scopus Terkini (Live Data)"):
-                        st.write("Mengambil data langsung dari Scopus...")
+                    # Publikasi dan Proyek
+                    with st.expander("📚 5 Publikasi Populer di Google Scholar"):
+                        st.write("Memuat data publikasi...")
                         
-                        # Panggil fungsi dengan ID Scopus Prof. Rima
-                        df_pub = get_scopus_publications("55977023600")
+                        # Masukkan ID dari URL: Q4Dwd_AAAAAJ
+                        daftar_jurnal = get_scholar_publications("Q4Dwd_AAAAAJ")
                         
-                        if df_pub is not None and not df_pub.empty:
-                            # Menampilkan dalam bentuk tabel Streamlit yang rapi dan bisa di-scroll
-                            st.dataframe(df_pub, use_container_width=True)
+                        if daftar_jurnal:
+                            for jurnal in daftar_jurnal:
+                                st.markdown(f"**{jurnal['Judul']}** ({jurnal['Tahun']})")
+                                st.caption(f"⭐ Disitasi sebanyak: {jurnal['Sitasi']} kali")
+                                st.write("---")
                         else:
-                            # Fallback jika API gagal (misal di luar jaringan kampus)
-                            st.warning("Gagal memuat data otomatis. Silakan periksa koneksi jaringan kampus/API Key.")
+                            # Fallback jika Google memblokir akses otomatis (Captcha triggered)
+                            st.warning("Gagal memuat otomatis karena batasan akses Google Scholar.")
+                            st.markdown("[Klik di sini untuk melihat langsung di Google Scholar](https://scholar.google.com/citations?user=Q4Dwd_AAAAAJ)")
+                    
+    st.write("") # Spacer
 
-    # st.write("") # Spacer
-
-    # # --- Peneliti 2 (Fokus Teknik Informatika / Data Science) ---
-    # with st.container(border=True):
-    #     col_p2_img, col_p2_txt = st.columns([1, 3])
+    # --- Peneliti 2 (Fokus Teknik Informatika / Data Science) ---
+    with st.container(border=True):
+        col_p2_img, col_p2_txt = st.columns([1, 3])
         
-    #     with col_p2_img:
-    #         st.image("https://via.placeholder.com/150", caption="Pembimbing Utama 2", use_container_width=True)
+        with col_p2_img:
+            st.image("https://via.placeholder.com/150", caption="Anggota", use_container_width=True)
             
-    #     with col_p2_txt:
-    #         st.markdown("### Dr. Bain Khusnul Khotimah, S.T., M.Kom.")
-    #         st.caption("Ketua Kelompok Riset Komputasi Cerdas & Dosen Teknik Informatika UTM")
-    #         st.write("""
-    #         **Bidang Keahlian & Proyek MBKM:** *Data Mining*, *Soft Computing*, dan *Artificial Intelligence* (AI).  
+        with col_p2_txt:
+            st.markdown("### Ahmad Ar-rosyid Hidayatullah")
+            st.caption("Anggota Kelompok Riset MBKM | Mahasiswa Teknik Informatika UTM")
+            st.write("""
+            **Bidang Keahlian & Proyek MBKM:** *Data Mining*, *Soft Computing*, dan *Artificial Intelligence* (AI).  
             
-    #         Membuka peluang MBKM Riset bagi mahasiswa yang tertarik pada pemrosesan citra digital (*image processing*), pembelajaran mendalam (*deep learning*), dan segmentasi objek untuk mendukung sektor pertanian pintar (*smart agriculture*).
-    #         """)
-            
-    #         with st.expander("📚 Publikasi & Proyek Riset Aktif"):
-    #             st.markdown("""
-    #             * *Khotimah, B. K., et al.* "Implementation of Computer Vision for Agricultural Product Grading." *Journal of ICT Research*.
-    #             * *Proyek Riset Aktif (2026):* "Sistem Pengenalan Gejala Penyakit Daun Menggunakan Metode Klasifikasi Terarah." (Melibatkan Mandat Kerja Sama MBKM).
-    #             """)
+            Membuka peluang MBKM Riset bagi mahasiswa yang tertarik pada pemrosesan citra digital (*image processing*), pembelajaran mendalam (*deep learning*), dan segmentasi objek untuk mendukung sektor pertanian pintar (*smart agriculture*).
+            """)
 
     # --- FOOTER ---
     st.write("---")
-    st.caption("© 2026 MBKM Riset - Universitas Trunojoyo Madura. Dikembangkan menggunakan Streamlit. - Last Updated: 2026-01-15")
+    st.caption("© 2026 MBKM Riset - Universitas Trunojoyo Madura. Dikembangkan menggunakan Streamlit. - Last Updated: 2026-06-12")
